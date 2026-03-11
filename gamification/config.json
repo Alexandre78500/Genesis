@@ -1,0 +1,140 @@
+{
+  "achievements": [
+    {
+      "id": "first_light",
+      "name": "First Light",
+      "description": "Premier entraînement réussi",
+      "tier": "bronze",
+      "icon": "🔥",
+      "condition": {"type": "total_runs", "value": 1}
+    },
+    {
+      "id": "first_blood",
+      "name": "First Blood",
+      "description": "Première amélioration commitée",
+      "tier": "bronze",
+      "icon": "🩸",
+      "condition": {"type": "total_keeps", "value": 1}
+    },
+    {
+      "id": "tinkerer",
+      "name": "Tinkerer",
+      "description": "10 experiments complétés",
+      "tier": "bronze",
+      "icon": "🔧",
+      "condition": {"type": "total_runs", "value": 10}
+    },
+    {
+      "id": "night_shift",
+      "name": "Night Shift",
+      "description": "100 experiments complétés",
+      "tier": "silver",
+      "icon": "🌙",
+      "condition": {"type": "total_runs", "value": 100}
+    },
+    {
+      "id": "centurion",
+      "name": "Centurion",
+      "description": "100 améliorations commitées",
+      "tier": "silver",
+      "icon": "⚔️",
+      "condition": {"type": "total_keeps", "value": 100}
+    },
+    {
+      "id": "breakthrough",
+      "name": "Breakthrough",
+      "description": "Amélioration > 1% en un seul experiment",
+      "tier": "silver",
+      "icon": "💡",
+      "condition": {"type": "single_improvement_pct", "value": 1.0}
+    },
+    {
+      "id": "hot_streak",
+      "name": "Hot Streak",
+      "description": "5 améliorations consécutives",
+      "tier": "gold",
+      "icon": "🔥",
+      "condition": {"type": "consecutive_keeps", "value": 5}
+    },
+    {
+      "id": "pioneer",
+      "name": "Pioneer",
+      "description": "Essayé 5+ catégories de modifications",
+      "tier": "gold",
+      "icon": "🧭",
+      "condition": {"type": "categories_tried", "value": 5}
+    },
+    {
+      "id": "sub_99",
+      "name": "Sub-99",
+      "description": "val_bpb < 0.99",
+      "tier": "gold",
+      "icon": "📉",
+      "condition": {"type": "best_bpb_below", "value": 0.99}
+    },
+    {
+      "id": "marginal_gains",
+      "name": "Marginal Gains",
+      "description": "10 micro-améliorations < 0.1% chacune",
+      "tier": "gold",
+      "icon": "🔬",
+      "condition": {"type": "micro_improvements", "value": 10}
+    },
+    {
+      "id": "factory_owner",
+      "name": "Factory Owner",
+      "description": "500 experiments complétés",
+      "tier": "platinum",
+      "icon": "🏭",
+      "condition": {"type": "total_runs", "value": 500}
+    },
+    {
+      "id": "architect",
+      "name": "Architect",
+      "description": "Modification d'architecture qui améliore",
+      "tier": "platinum",
+      "icon": "🏗️",
+      "condition": {"type": "category_keep", "category": "architecture"}
+    },
+    {
+      "id": "efficiency_expert",
+      "name": "Efficiency Expert",
+      "description": "Meilleur score avec moins de mémoire que la baseline",
+      "tier": "platinum",
+      "icon": "⚡",
+      "condition": {"type": "better_score_less_memory"}
+    }
+  ],
+  "tech_tree": {
+    "tier1_foundations": {
+      "name": "Fondations",
+      "description": "Hyperparamètres de base",
+      "keywords": ["learning rate", "lr", "batch size", "warmup", "warmdown", "cooldown"],
+      "unlock_requires": 0
+    },
+    "tier2_architecture": {
+      "name": "Architecture",
+      "description": "Structure du modèle",
+      "keywords": ["depth", "n_embd", "n_head", "n_kv", "head_dim", "aspect_ratio", "window", "layer"],
+      "unlock_requires": 3
+    },
+    "tier3_optimization": {
+      "name": "Optimisation",
+      "description": "Optimizer et régularisation",
+      "keywords": ["weight decay", "momentum", "adam", "muon", "scheduler", "gradient", "clip"],
+      "unlock_requires": 5
+    },
+    "tier4_innovation": {
+      "name": "Innovation",
+      "description": "Techniques avancées et expérimentales",
+      "keywords": ["activation", "norm", "attention", "embedding", "residual", "gelu", "swiglu", "rope"],
+      "unlock_requires": 8
+    }
+  },
+  "tier_colors": {
+    "bronze": "#CD7F32",
+    "silver": "#C0C0C0",
+    "gold": "#FFD700",
+    "platinum": "#E5E4E2"
+  }
+}
