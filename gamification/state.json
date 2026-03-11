@@ -1,5 +1,11 @@
 {
-  "unlocked": [],
-  "unlocked_at": {},
+  "unlocked": [
+    "first_light",
+    "first_blood"
+  ],
+  "unlocked_at": {
+    "first_light": "2026-03-11T21:49:48.507124",
+    "first_blood": "2026-03-11T21:49:48.507252"
+  },
   "sessions": []
 }
