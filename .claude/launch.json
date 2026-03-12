@@ -1,0 +1,17 @@
+{
+  "version": "0.0.1",
+  "configurations": [
+    {
+      "name": "cockpit",
+      "runtimeExecutable": "/Users/alexandre/projects/lab/.venv/bin/uvicorn",
+      "runtimeArgs": ["webapp.backend.main:app", "--host", "0.0.0.0", "--port", "8000"],
+      "port": 8000
+    },
+    {
+      "name": "frontend-dev",
+      "runtimeExecutable": "npm",
+      "runtimeArgs": ["run", "dev", "--prefix", "webapp/frontend", "--", "--port", "5173"],
+      "port": 5173
+    }
+  ]
+}

@@ -13,17 +13,13 @@ sse_manager: SSEManager | None = None
 
 @router.get("/stream")
 async def stream():
-    response = await sse_manager.connect()
-
-    # Queue initial snapshot for this client
-    snapshot = get_snapshot()
-    # The snapshot is sent as the first event via the SSE manager
-    # We broadcast it only to the newest client by sending directly
     import json
+
+    response, queue = await sse_manager.connect()
+
+    # Queue initial snapshot directly to this client's queue
+    snapshot = get_snapshot()
     snapshot_payload = json.dumps(snapshot, default=str)
-    # Get the last queue added (the one we just created)
-    if sse_manager._clients:
-        newest = max(sse_manager._clients, key=id)
-        newest.put_nowait(f"event: snapshot\ndata: {snapshot_payload}\n\n")
+    queue.put_nowait(f"event: snapshot\ndata: {snapshot_payload}\n\n")
 
     return response

@@ -16,5 +16,17 @@ queue/
 CLAUDE.md
 AGENTS.md
 
+# Frontend build artifacts
+webapp/frontend/build/
+webapp/frontend/.svelte-kit/
+webapp/frontend/node_modules/
+.vite/
+
+# Playwright MCP temp files
+.playwright-mcp/
+
+# Screenshots (temp)
+*.png
+
 # Experimental code/artifacts
 dev/

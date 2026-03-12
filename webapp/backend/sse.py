@@ -13,7 +13,7 @@ class SSEManager:
     def __init__(self):
         self._clients: set[asyncio.Queue] = set()
 
-    async def connect(self) -> StreamingResponse:
+    async def connect(self) -> tuple[StreamingResponse, asyncio.Queue]:
         queue: asyncio.Queue = asyncio.Queue()
         self._clients.add(queue)
 
@@ -29,7 +29,7 @@ class SSEManager:
             finally:
                 self._clients.discard(queue)
 
-        return StreamingResponse(
+        response = StreamingResponse(
             event_stream(),
             media_type="text/event-stream",
             headers={
@@ -38,6 +38,7 @@ class SSEManager:
                 "X-Accel-Buffering": "no",
             },
         )
+        return response, queue
 
     async def broadcast(self, event: str, data: dict | list):
         payload = json.dumps(data, default=str)
