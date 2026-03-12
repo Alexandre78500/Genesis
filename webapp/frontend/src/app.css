@@ -1,0 +1,96 @@
+@import 'tailwindcss';
+
+/* === Factorio Theme === */
+@theme {
+	--color-factorio-void: #0d0d0d;
+	--color-factorio-iron: #1a1510;
+	--color-factorio-rust: #3a3020;
+	--color-factorio-bronze: #5a4a30;
+	--color-factorio-parchment: #d4c4a0;
+	--color-factorio-steel: #8a8070;
+	--color-factorio-orange: #ff9a00;
+	--color-factorio-ember: #ff6a00;
+	--color-factorio-green: #5cb85c;
+	--color-factorio-red: #d9534f;
+	--color-factorio-concrete: #6a6050;
+	--color-factorio-blue: #4a90d9;
+
+	--color-tier-bronze: #CD7F32;
+	--color-tier-silver: #C0C0C0;
+	--color-tier-gold: #FFD700;
+	--color-tier-platinum: #E5E4E2;
+
+	--font-mono: 'JetBrains Mono', 'Fira Code', 'Cascadia Code', 'Consolas', monospace;
+}
+
+/* === Global === */
+* {
+	margin: 0;
+	padding: 0;
+	box-sizing: border-box;
+}
+
+html, body {
+	height: 100%;
+	overflow: hidden;
+	background: var(--color-factorio-void);
+	color: var(--color-factorio-parchment);
+	font-family: var(--font-mono);
+	font-size: 13px;
+	-webkit-font-smoothing: antialiased;
+}
+
+/* === Scrollbar (Factorio style) === */
+::-webkit-scrollbar {
+	width: 6px;
+}
+::-webkit-scrollbar-track {
+	background: var(--color-factorio-void);
+}
+::-webkit-scrollbar-thumb {
+	background: var(--color-factorio-rust);
+	border: none;
+}
+::-webkit-scrollbar-thumb:hover {
+	background: var(--color-factorio-bronze);
+}
+
+/* === Selection === */
+::selection {
+	background: var(--color-factorio-orange);
+	color: var(--color-factorio-void);
+}
+
+/* === Animations === */
+@keyframes pulse-glow {
+	0%, 100% { opacity: 0.6; }
+	50% { opacity: 1; }
+}
+
+@keyframes fade-in {
+	from { opacity: 0; transform: translateY(-4px); }
+	to { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes slide-down {
+	from { transform: translateY(-100%); }
+	to { transform: translateY(0); }
+}
+
+@keyframes slide-up {
+	from { transform: translateY(0); }
+	to { transform: translateY(-100%); }
+}
+
+@keyframes progress-stripe {
+	0% { background-position: 0 0; }
+	100% { background-position: 20px 0; }
+}
+
+.animate-fade-in {
+	animation: fade-in 0.3s ease-out;
+}
+
+.animate-pulse-glow {
+	animation: pulse-glow 2s ease-in-out infinite;
+}

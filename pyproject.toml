@@ -15,4 +15,11 @@ dependencies = [
     "torch==2.6.0",
 ]
 
+[tool.setuptools]
+packages = []
 
+[project.optional-dependencies]
+webapp = [
+    "fastapi>=0.115.0",
+    "uvicorn[standard]>=0.34.0",
+]
