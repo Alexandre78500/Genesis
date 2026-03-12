@@ -2,11 +2,12 @@
 
 import asyncio
 
-from .config import POLL_INTERVAL_S, RESULTS_TSV, RUN_LOG, STATE_JSON
+from .config import HISTORY_TSV, POLL_INTERVAL_S, RESULTS_TSV, RUN_LOG, STATE_JSON
 from .data import (
     compute_stats,
     evaluate_achievements,
     get_tech_tree_progress,
+    load_history,
     load_results,
     parse_run_log_step,
 )
@@ -54,6 +55,9 @@ class FileWatcher:
         new_results = results[self._last_result_count:]
         self._last_result_count = len(results)
 
+        # Append new results to cumulative history
+        self._append_to_history(new_results)
+
         # Broadcast each new result
         for i, r in enumerate(new_results):
             result_with_index = {**r, "index": len(results) - len(new_results) + i}
@@ -78,6 +82,18 @@ class FileWatcher:
         config = load_config()
         tree = build_dynamic_tree(results, config)
         await self.sse.broadcast("techtree_update", tree)
+
+    def _append_to_history(self, new_results: list[dict]):
+        """Append new results to cumulative history.tsv (never reset by agent)."""
+        try:
+            needs_header = not HISTORY_TSV.exists() or HISTORY_TSV.stat().st_size == 0
+            with open(HISTORY_TSV, "a") as f:
+                if needs_header:
+                    f.write("commit\tval_bpb\tmemory_gb\tstatus\tdescription\n")
+                for r in new_results:
+                    f.write(f"{r['commit']}\t{r['val_bpb']}\t{r['memory_gb']}\t{r['status']}\t{r.get('description', '')}\n")
+        except Exception:
+            pass
 
     async def _check_runlog(self):
         if not RUN_LOG.exists():

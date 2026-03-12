@@ -21,9 +21,9 @@ export function updateTraining(data: TrainingProgress) {
 	trainingProgress.set(data);
 	isTraining.set(true);
 
-	// If no update for 10s, mark as idle
+	// If no update for 60s, mark as idle (M4 steps can take 20-30s each)
 	if (trainingTimeout) clearTimeout(trainingTimeout);
 	trainingTimeout = setTimeout(() => {
 		isTraining.set(false);
-	}, 10000);
+	}, 60000);
 }

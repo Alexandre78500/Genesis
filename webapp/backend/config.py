@@ -2,6 +2,7 @@ from pathlib import Path
 
 PROJECT_ROOT = Path(__file__).parent.parent.parent
 RESULTS_TSV = PROJECT_ROOT / "results.tsv"
+HISTORY_TSV = PROJECT_ROOT / "history.tsv"
 GAMIFICATION_DIR = PROJECT_ROOT / "gamification"
 STATE_JSON = GAMIFICATION_DIR / "state.json"
 CONFIG_JSON = GAMIFICATION_DIR / "config.json"

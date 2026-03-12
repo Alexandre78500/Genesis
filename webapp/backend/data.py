@@ -5,7 +5,9 @@ import subprocess
 import sys
 from pathlib import Path
 
-from .config import PROJECT_ROOT, RESULTS_TSV, RUN_LOG
+import csv
+
+from .config import HISTORY_TSV, PROJECT_ROOT, RESULTS_TSV, RUN_LOG
 from .techtree import build_dynamic_tree
 
 # Allow importing from gamification/
@@ -28,17 +30,45 @@ STEP_RE = re.compile(
 )
 
 
+def load_history() -> list[dict]:
+    """Load cumulative history.tsv (survives agent branch resets)."""
+    if not HISTORY_TSV.exists():
+        return []
+    rows = []
+    with open(HISTORY_TSV) as f:
+        reader = csv.DictReader(f, delimiter="\t")
+        for row in reader:
+            try:
+                row["val_bpb"] = float(row["val_bpb"])
+                row["memory_gb"] = float(row["memory_gb"])
+            except (ValueError, KeyError):
+                continue
+            rows.append(row)
+    return rows
+
+
 def get_snapshot() -> dict:
     status = get_full_status()
-    results = load_results()
     config = load_config()
-    return {
+
+    # Use history.tsv (cumulative) if available, fall back to results.tsv
+    history = load_history()
+    results = history if history else load_results()
+
+    snapshot = {
         "results": results,
         "stats": status["stats"],
         "achievements": status["achievements"],
         "tech_tree": build_dynamic_tree(results, config),
         "newly_unlocked": status["newly_unlocked"],
     }
+
+    # Include current training state from run.log for immediate display on connect
+    training = parse_run_log_step(get_run_log_tail(100))
+    if training:
+        snapshot["training"] = training
+
+    return snapshot
 
 
 def get_results() -> list[dict]:

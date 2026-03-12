@@ -40,6 +40,9 @@ export function initSSE() {
 		achievements.set(data.achievements || []);
 		if (data.tech_tree) techTree.set(data.tech_tree);
 
+		// Restore live training state immediately on connect/refresh
+		if (data.training) updateTraining(data.training);
+
 		// Build initial activity feed from results
 		const items = (data.results || []).map((r: any, i: number) => ({
 			type: 'experiment' as const,
