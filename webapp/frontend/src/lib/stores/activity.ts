@@ -18,3 +18,7 @@ export function addActivity(item: ActivityItem) {
 		return updated.slice(0, MAX_ITEMS);
 	});
 }
+
+export function setActivityFeed(items: ActivityItem[]) {
+	activityFeed.set(items.slice(0, MAX_ITEMS));
+}

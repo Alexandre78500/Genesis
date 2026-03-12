@@ -24,6 +24,7 @@ FRONTEND_BUILD = Path(__file__).parent.parent / "frontend" / "build"
 
 @asynccontextmanager
 async def lifespan(app: FastAPI):
+    await file_watcher.prime()
     watcher_task = asyncio.create_task(file_watcher.watch_loop())
     heartbeat_task = asyncio.create_task(sse_manager.heartbeat_loop())
     yield

@@ -30,3 +30,5 @@ webapp/frontend/node_modules/
 
 # Experimental code/artifacts
 dev/
+history.tsv
+gamification/live_state.json

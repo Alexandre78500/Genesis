@@ -1,23 +1,21 @@
 """Data layer — wraps gamification/engine.py and adds git/run.log access."""
 
+from __future__ import annotations
+
+import csv
 import re
 import subprocess
 import sys
-from pathlib import Path
 
-import csv
-
-from .config import HISTORY_TSV, PROJECT_ROOT, RESULTS_TSV, RUN_LOG
+from .config import HISTORY_TSV, PROJECT_ROOT, RUN_LOG
+from .live_state import export_live_state, load_live_state
 from .techtree import build_dynamic_tree
 
 # Allow importing from gamification/
 sys.path.insert(0, str(PROJECT_ROOT))
 from gamification.engine import (
-    classify_experiment,
     compute_stats,
     evaluate_achievements,
-    get_full_status,
-    get_tech_tree_progress,
     load_config,
     load_results,
     load_state,
@@ -34,6 +32,7 @@ def load_history() -> list[dict]:
     """Load cumulative history.tsv (survives agent branch resets)."""
     if not HISTORY_TSV.exists():
         return []
+
     rows = []
     with open(HISTORY_TSV) as f:
         reader = csv.DictReader(f, delimiter="\t")
@@ -47,43 +46,56 @@ def load_history() -> list[dict]:
     return rows
 
 
-def get_snapshot() -> dict:
-    status = get_full_status()
-    config = load_config()
-
-    # Use history.tsv (cumulative) if available, fall back to results.tsv
+def get_dashboard_results() -> list[dict]:
     history = load_history()
-    results = history if history else load_results()
+    return history if history else load_results()
 
-    snapshot = {
+
+def build_achievements_payload() -> list[dict]:
+    config = load_config()
+    state = load_state()
+    unlocked_ids = set(state.get("unlocked", []))
+    unlocked_at = state.get("unlocked_at", {})
+
+    return [
+        {
+            **achievement,
+            "unlocked": achievement["id"] in unlocked_ids,
+            "unlocked_at": unlocked_at.get(achievement["id"]),
+        }
+        for achievement in config["achievements"]
+    ]
+
+
+def get_snapshot() -> dict:
+    results = get_dashboard_results()
+    stats = compute_stats(results)
+    config = load_config()
+    live_state = export_live_state(load_live_state())
+
+    return {
         "results": results,
-        "stats": status["stats"],
-        "achievements": status["achievements"],
+        "stats": {k: list(v) if isinstance(v, set) else v for k, v in stats.items()},
+        "achievements": build_achievements_payload(),
         "tech_tree": build_dynamic_tree(results, config),
-        "newly_unlocked": status["newly_unlocked"],
+        "newly_unlocked": [],
+        "live_run": live_state,
+        "recent_steps": live_state.get("recent_steps", []),
     }
-
-    # Include current training state from run.log for immediate display on connect
-    training = parse_run_log_step(get_run_log_tail(100))
-    if training:
-        snapshot["training"] = training
-
-    return snapshot
 
 
 def get_results() -> list[dict]:
-    return load_results()
+    return get_dashboard_results()
 
 
 def get_stats() -> dict:
-    results = load_results()
+    results = get_dashboard_results()
     stats = compute_stats(results)
     return {k: list(v) if isinstance(v, set) else v for k, v in stats.items()}
 
 
 def get_achievements() -> list[dict]:
-    status = get_full_status()
-    return status["achievements"]
+    return build_achievements_payload()
 
 
 def get_git_log(limit: int = 200) -> list[dict]:
@@ -152,17 +164,17 @@ def parse_run_log_step(text: str) -> dict | None:
     # run.log uses \r for progress lines, find the last step line
     parts = text.replace("\r", "\n").split("\n")
     for line in reversed(parts):
-        m = STEP_RE.search(line)
-        if m:
+        match = STEP_RE.search(line)
+        if match:
             return {
-                "step": int(m.group(1)),
-                "progress_pct": float(m.group(2)),
-                "loss": float(m.group(3)),
-                "lr_mult": float(m.group(4)),
-                "dt_ms": int(m.group(5)),
-                "tok_per_sec": m.group(6),
-                "mfu": float(m.group(7)),
-                "epoch": int(m.group(8)),
-                "remaining_s": int(m.group(9)),
+                "step": int(match.group(1)),
+                "progress_pct": float(match.group(2)),
+                "loss": float(match.group(3)),
+                "lr_mult": float(match.group(4)),
+                "dt_ms": int(match.group(5)),
+                "tok_per_sec": match.group(6),
+                "mfu": float(match.group(7)),
+                "epoch": int(match.group(8)),
+                "remaining_s": int(match.group(9)),
             }
     return None
